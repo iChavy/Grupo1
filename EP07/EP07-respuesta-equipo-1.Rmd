@@ -16,34 +16,131 @@ knitr::opts_chunk$set(echo = TRUE)
 setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
 ```
 
+1. Observando los datos, la memorista sospecha que hay diferencias significativas en el tiempo de ejecución entre las versiones A y B del
+algoritmo cuando las instancias tienen 70 o más nodos. ¿Los datos respaldan la intuición de la memorista? Para responder, filtren los 
+datos para tener las instancias con 70 o más nodos y seleccionen las columnas de los tiempos de ejecución de las versiones A y B en 
+formato ancho. Usando como semilla el valor 73, obtengan muestras aleatorias independientes de 24 tiempos registrados por la versión A
+y 20 tiempos registrados por la versión B del algoritmo. Lleven los datos a formato largo y utilicen la escalera de potencias de Tukey
+para analizar las muestras obtenidas.
+
+## Hipótesis:
+
+### **H0 : Los tiempos de ejecución entre la versión A y B del algoritmo cuando estas poseen instancias de 70 o más nodos, no poseen diferencias significativas**
+$$ \mu_{dif} = 0 $$
+
+### **Ha : Los tiempos de ejecución entre la versión A y B del algoritmo cuando estas poseen instancias de 70 o más nodos, poseen diferencias significativas.**
+$$ \mu_{dif}  \neq 0 $$
+
 ```{r}
 set.seed(73)
 datos <-read.csv(file="EP07 Datos.csv")
 over70Nodos = datos %>% filter (n.nodos >= 70)
 ```
 
-Muestras aleatorias simples
-Primero, se seleccionan los datos que posean 70 nodos y mas 
+### Selección de muestras para el algoritmo A y B
+Primero, se seleccionan los datos que posean 70 nodos o más, los cuales están en formato ancho.
+Luego, se seleccionan de forma aleatoria 24 muestras para el tiempo del algoritmo A y 20 para el algoritmo B.
 ```{r}
 # Data frame con n.nodos >= 70 
-muestra = datos[sample(which(datos$n.nodos >= 70),44),]
-muestra_t_A = muestra[,4][1:24]
-muestra_t_B = muestra[,5][25:44]
+muestra <- datos[sample(which(datos$n.nodos >= 70), 44), ]
+muestra_t_A <- muestra[, 4][1:24]
+muestra_t_B <- muestra[, 5][25:44]
 ```
 
-Formato largo
+### Prueba de normalidad para cada muestra
+```{r}
+shapiroMuestraA <- shapiro.test(muestra_t_A)
+shapiroMuestraB <- shapiro.test(muestra_t_B)
+c(shapiroMuestraA$p.value, shapiroMuestraB$p.value)
+```
+Considerando un nivel de significancia de alpha = 0.05, al aplicar shapiro.test a las muestras del algoritmo A y del algoritmo B,
+se da cuenta que el valor p obtenido en ambas pruebas, es menor al alpha. En consecuencia, dichas muestras no siguen una distribución cercana a la normal
+y es necesario realizar una transformación de los datos para poder analizarlos. En este caso, se utilizará la escalera de potencias de Tukey.
+
+Sin embargo, los datos se deben llevar a formato largo para poder utilizar la escalera de potencias de Tukey para analizar las muestras obtenidas.
 ```{r}
 id <- factor(1:44)
-algoritmos = c(replicate(24,'A'),replicate(20,'B'))
-tiempos = c(muestra_t_A,muestra_t_B)
-data <- data.frame(id=id,algoritmos=algoritmos,tiempos=tiempos)
-
+algoritmos <- c(
+                replicate(24, "A"),
+                replicate(20, "B")
+                )
+tiempos <- c(muestra_t_A, muestra_t_B)
+data <- data.frame(
+                    id <- id,
+                    algoritmos <- algoritmos,
+                    tiempos <- tiempos
+                    )
 ```
 
-Transformada de tukey
+### Transformada de tukey
 ```{r}
-transformada = transformTukey(data$tiempos,start=-2,end=2,int=0.001,returnLambda = FALSE)
+transformada <- transformTukey(
+                            data$tiempos,
+                            start <- -2,
+                            end <- 2,
+                            int <- 0.001,
+                            returnLambda  <- FALSE
+                            )
 ```
+
+Al observar el gráfico Q-Q obtenido al aplicar la escalera de potencias de Tukey, se puede observar que los datos se ajustan a una distribución normal. En consecuencia 
+procede a aplicar una prueba t para dos muestras no independientes.
+
+Luego, se procede a verificar si se cumplen las condiciones necesarias para poder aplicar la prueba t para dos muestras no independientes:
+
+- Como las muestras obtenidas, tanto para el algoritmo A como para el algoritmo B, fueron escogidas aleatoriamente y son independientes entre si
+- Según la transformada de Tukey aplicada se tiene que los nuevos datos siguen una distribución normal,
+esto debido a que la prueba shapiro da un valor 0.1826 mayor al 0.05, que es nuestro valor de alfa.
+
+Dado que se cumplen, se procede a aplicar la prueba ya mencionada:
+
+### Aplicación de t test dos muestras independientes
+```{r}
+data$tiempos <- transformada
+alfa <- 0.05
+muestraATransformada <- (data %>% filter(algoritmos....algoritmos == "A"))$tiempos
+muestraBTransformada <- (data %>% filter(algoritmos....algoritmos == "B"))$tiempos
+t.test(
+        x <- muestraATransformada,
+        y <- muestraBTransformada,
+        paired = FALSE,
+        alternative <- "two.sided",
+        conf.level = 1 - alfa
+        )$p.value
+```
+Dado que el valor p es menor a 0.025 (que es nuestro alfa/2 gracias a que es de dos colas) entonces se rechaza la hipótesis nula en favor de la hipótesis alternativa, por lo tanto, las sospechas de la memorista son ciertas, en otras palabras, las diferencias entre los algoritmos A y B para instancias de 70 o más nodos presentan diferencias significativas.
+
+2. La memorista también sospecha que, al comparar las mismas instancias, las mejores soluciones encontradas por las versiones B y C tienen rendimientos distintos. ¿Estará en lo cierto?
+Para responder, filtren los datos para tener las instancias con 70 o más nodos y seleccionen las columnas con el mejor rendimiento de las versiones B y C en formato ancho. Usando como semilla el valor 71, obtengan una muestra aleatoria de 24 instancias. Lleven los datos a formato largo y utilicen una prueba no paramétrica apropiada para analizar las muestras obtenidas.
+
+## Hipótesis:
+
+### **H0 : Las mejores soluciones encontradas para la versión B y C del algoritmo cuando estas poseen instancias de 70 o más nodos, no poseen rendimientos distintos**
+$$ \mu_B  = \mu_C $$
+
+### **Ha : Las mejores soluciones encontradas para la versión B y C del algoritmo cuando estas poseen instancias de 70 o más nodos, poseen rendimientos distintos**
+$$ \mu_B \neq \mu_C $$
+
+
+Dado que se quiere determinar si para una misma instancia existen distintos rendimientos, se determina que se debe utilizar la
+prueba de rangos con signos de Wilcoxon.
+
+### Prueba de rangos con signos de Wilcoxon
+```{r}
+set.seed(71)
+muestra <- datos[sample(which(datos$n.nodos >= 70), 48), ]
+mejoresB <- muestra$mejor.B
+mejoresC <- muestra$mejor.C
+prueba <- wilcox.test(x = mejoresB,
+                    y = mejoresC,
+                    paired = TRUE,
+                    alternative = "two.sided",
+                    conf.level = 0.95,
+                    mu = 0
+                    )
+prueba$p.value
+```
+Dado que el valor p obtenido por la prueba es menor a nuestro alfa = 0.05, se rechaza la hipótesis nula en favor de la hipótesis alternativa, por ende, las sospechas de la memorista son ciertas, es decir, las mejores soluciones encontradas para la versión B y C del algoritmo cuando estas poseen instancias de 70 o más nodos, poseen rendimientos distintos.
 
 
 

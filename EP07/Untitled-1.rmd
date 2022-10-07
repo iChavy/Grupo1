@@ -1,0 +1,77 @@
+---
+title: "Ejercicio 7"
+author: "Alex Pacheco - Francisco Salfate - Xavier Munoz - Elena Guzman"
+date: '2022-10-04'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library ( knitr )
+library ( tidyverse )
+library ( RVAideMemoire )
+library ( rcompanion )
+library ( ez )
+knitr::opts_chunk$set(echo = TRUE)
+#setwd('C:\\Users\\Alex\\Desktop\\usach\\Semestre 6\\Estadística Inferencial\\Ejercicio 7')
+setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
+```
+
+```{r}
+set.seed(73)
+datos <-read.csv(file="EP07 Datos.csv")
+over70Nodos = datos %>% filter (n.nodos >= 70)
+```
+
+Primero, se seleccionan los datos que posean 70 nodos o más, los cuales están en formato ancho.
+Luego, se seleccionan de forma aleatoria 24 muestras para el tiempo del algoritmo A y 20 para el algoritmo B.
+```{r}
+# Data frame con n.nodos >= 70 
+muestra <- datos[sample(which(datos$n.nodos >= 70), 44), ]
+muestra_t_A <- muestra[, 4][1:24]
+muestra_t_B <- muestra[, 5][25:44]
+```
+
+Prueba de normalidad para cada muestra
+```{r}
+shapiroMuestraA <- shapiro.test(muestra_t_A)
+shapiroMuestraB <- shapiro.test(muestra_t_B)
+c(shapiroMuestraA$p.value, shapiroMuestraB$p.value)
+```
+Dado que los valores de los valores p 
+
+Una vez obtenidos los datos, se llevan a formato largo para luego utilizar la escala de potencias de Tukey para analizar las muestras obtenidas
+EXPLICAR POR QUÉ SE DEBE USAR TUKEY <<<<<<<<<<<<<<<<
+```{r}
+id <- factor(1:44)
+algoritmos <- c(
+                replicate(24, "A"),
+                replicate(20, "B")
+                )
+tiempos <- c(muestra_t_A, muestra_t_B)
+data <- data.frame(
+                    id <- id,
+                    algoritmos <- algoritmos,
+                    tiempos <- tiempos
+                    )
+```
+
+Transformada de tukey
+```{r}
+transformada <- transformTukey(
+                            data$tiempos,
+                            start <- -2,
+                            end <- 2,
+                            int <- 0.001,
+                            returnLambda  <- FALSE
+                            )
+```
+
+- Dado que las muestras que plan
+- Según la transformada de Tukey aplicada se tiene que los nuevos datos siguen una distribución normal,
+esto debido a que la prueba shapiro da un valor 0.1826 mayor al 0.05, que es nuestro valor de alfa.
+
+Aplicación de t test
+```{r}
+
+```
+
