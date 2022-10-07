@@ -1,0 +1,51 @@
+---
+title: "Ejercicio 7"
+author: "Alex Pacheco - Francisco Salfate - Xavier Munoz - Elena Guzman"
+date: '2022-10-04'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library ( knitr )
+library ( tidyverse )
+library ( RVAideMemoire )
+library ( rcompanion )
+library ( ez )
+knitr::opts_chunk$set(echo = TRUE)
+#setwd('C:\\Users\\Alex\\Desktop\\usach\\Semestre 6\\Estadística Inferencial\\Ejercicio 7')
+setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
+```
+
+```{r}
+set.seed(73)
+datos <-read.csv(file="EP07 Datos.csv")
+over70Nodos = datos %>% filter (n.nodos >= 70)
+```
+
+Muestras aleatorias simples
+Primero, se seleccionan los datos que posean 70 nodos y mas 
+```{r}
+# Data frame con n.nodos >= 70 
+muestra = datos[sample(which(datos$n.nodos >= 70),44),]
+muestra_t_A = muestra[,4][1:24]
+muestra_t_B = muestra[,5][25:44]
+```
+
+Formato largo
+```{r}
+id <- factor(1:44)
+algoritmos = c(replicate(24,'A'),replicate(20,'B'))
+tiempos = c(muestra_t_A,muestra_t_B)
+data <- data.frame(id=id,algoritmos=algoritmos,tiempos=tiempos)
+
+```
+
+Transformada de tukey
+```{r}
+transformada = transformTukey(data$tiempos,start=-2,end=2,int=0.001,returnLambda = FALSE)
+```
+
+
+
+
+
