@@ -1,6 +1,5 @@
 ---
 title: "Ejercicio 7"
-author: "Alex Pacheco - Francisco Salfate - Xavier Munoz - Elena Guzman"
 date: '2022-10-04'
 output:
   html_document:
@@ -18,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
 ```
 
-1. Observando los datos, la memorista sospecha que hay diferencias significativas en el tiempo de ejecución entre las versiones A y B del algoritmo cuando las instancias tienen 70 o más nodos. ¿Los datos respaldan la intuición de la memorista? Para responder, filtren los  datos para tener las instancias con 70 o más nodos y seleccionen las columnas de los tiempos de ejecución de las versiones A y B en  formato ancho. Usando como semilla el valor 73, obtengan muestras aleatorias independientes de 24 tiempos registrados por la versión A y 20 tiempos registrados por la versión B del algoritmo. Lleven los datos a formato largo y utilicen la escalera de potencias de Tukey para analizar las muestras obtenidas.
+## 1. Observando los datos, la memorista sospecha que hay diferencias significativas en el tiempo de ejecución entre las versiones A y B del algoritmo cuando las instancias tienen 70 o más nodos. ¿Los datos respaldan la intuición de la memorista? Para responder, filtren los  datos para tener las instancias con 70 o más nodos y seleccionen las columnas de los tiempos de ejecución de las versiones A y B en  formato ancho. Usando como semilla el valor 73, obtengan muestras aleatorias independientes de 24 tiempos registrados por la versión A y 20 tiempos registrados por la versión B del algoritmo. Lleven los datos a formato largo y utilicen la escalera de potencias de Tukey para analizar las muestras obtenidas.
 
 ### Hipótesis:
 
@@ -64,7 +63,7 @@ data <- data.frame(
                     )
 ```
 
-### Transformada de tukey
+### Aplicación de la escalera de potencias de Tukey
 ```{r}
 transformada <- transformTukey(
                             data$tiempos,
@@ -79,12 +78,12 @@ Al observar el gráfico Q-Q obtenido al aplicar la escalera de potencias de Tuke
 
 Luego, se procede a verificar si se cumplen las condiciones necesarias para poder aplicar la prueba t para dos muestras no independientes:
 
-- Como las muestras obtenidas, tanto para el algoritmo A como para el algoritmo B, fueron escogidas aleatoriamente y son independientes entre si
+- Como las muestras obtenidas, tanto para el algoritmo A como para el algoritmo B, fueron escogidas aleatoriamente y son independientes entre sí.
 - Según la transformada de Tukey aplicada se tiene que los nuevos datos siguen una distribución normal, esto debido a que la prueba de shapiro da un valor 0.1826 mayor al 0.05, que es nuestro valor de alfa.
 
 Dado que se cumplen, se procede a aplicar la prueba ya mencionada:
 
-### Aplicación de t test dos muestras independientes
+### Aplicación de t test para dos muestras independientes
 ```{r}
 data$tiempos <- transformada
 alfa <- 0.05
@@ -98,17 +97,17 @@ t.test(
         conf.level = 1 - alfa
         )$p.value
 ```
-Dado que el valor p es menor a 0.025 (que es nuestro alfa/2 gracias a que es de dos colas) entonces se rechaza la hipótesis nula en favor de la hipótesis alternativa, por lo tanto, las sospechas de la memorista son ciertas, en otras palabras, las diferencias entre los algoritmos A y B para instancias de 70 o más nodos presentan diferencias significativas.
+Dado que el valor p es menor a 0.05, se rechaza la hipótesis nula en favor de la hipótesis alternativa, por lo tanto, las sospechas de la memorista son ciertas, en otras palabras, las diferencias entre los algoritmos A y B para instancias de 70 o más nodos presentan diferencias significativas.
 
 2. La memorista también sospecha que, al comparar las mismas instancias, las mejores soluciones encontradas por las versiones B y C tienen rendimientos distintos. ¿Estará en lo cierto?
 Para responder, filtren los datos para tener las instancias con 70 o más nodos y seleccionen las columnas con el mejor rendimiento de las versiones B y C en formato ancho. Usando como semilla el valor 71, obtengan una muestra aleatoria de 24 instancias. Lleven los datos a formato largo y utilicen una prueba no paramétrica apropiada para analizar las muestras obtenidas.
 
-## Hipótesis:
+### Hipótesis:
 
-### **H0 : Las mejores soluciones encontradas para la versión B y C del algoritmo cuando estas poseen instancias de 70 o más nodos, no poseen rendimientos distintos**
+##### **H0 : Las mejores soluciones encontradas para la versión B y C del algoritmo cuando estas poseen instancias de 70 o más nodos, no poseen rendimientos distintos**
 $$ \mu_B  = \mu_C $$
 
-### **Ha : Las mejores soluciones encontradas para la versión B y C del algoritmo cuando estas poseen instancias de 70 o más nodos, poseen rendimientos distintos**
+##### **Ha : Las mejores soluciones encontradas para la versión B y C del algoritmo cuando estas poseen instancias de 70 o más nodos, poseen rendimientos distintos**
 $$ \mu_B \neq \mu_C $$
 
 

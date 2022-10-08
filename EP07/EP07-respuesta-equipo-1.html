@@ -9,7 +9,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Alex Pacheco - Francisco Salfate - Xavier Munoz - Elena Guzman" />
 
 <meta name="date" content="2022-10-04" />
 
@@ -1635,15 +1634,13 @@ pre code {
 
 
 <h1 class="title toc-ignore">Ejercicio 7</h1>
-<h4 class="author">Alex Pacheco - Francisco Salfate - Xavier Munoz -
-Elena Guzman</h4>
 <h4 class="date">2022-10-04</h4>
 
 </div>
 
 
-<ol style="list-style-type: decimal">
-<li>Observando los datos, la memorista sospecha que hay diferencias
+<div id="observando-los-datos-la-memorista-sospecha-que-hay-diferencias-significativas-en-el-tiempo-de-ejecución-entre-las-versiones-a-y-b-del-algoritmo-cuando-las-instancias-tienen-70-o-más-nodos.-los-datos-respaldan-la-intuición-de-la-memorista-para-responder-filtren-los-datos-para-tener-las-instancias-con-70-o-más-nodos-y-seleccionen-las-columnas-de-los-tiempos-de-ejecución-de-las-versiones-a-y-b-en-formato-ancho.-usando-como-semilla-el-valor-73-obtengan-muestras-aleatorias-independientes-de-24-tiempos-registrados-por-la-versión-a-y-20-tiempos-registrados-por-la-versión-b-del-algoritmo.-lleven-los-datos-a-formato-largo-y-utilicen-la-escalera-de-potencias-de-tukey-para-analizar-las-muestras-obtenidas." class="section level2">
+<h2>1. Observando los datos, la memorista sospecha que hay diferencias
 significativas en el tiempo de ejecución entre las versiones A y B del
 algoritmo cuando las instancias tienen 70 o más nodos. ¿Los datos
 respaldan la intuición de la memorista? Para responder, filtren los
@@ -1653,8 +1650,7 @@ ancho. Usando como semilla el valor 73, obtengan muestras aleatorias
 independientes de 24 tiempos registrados por la versión A y 20 tiempos
 registrados por la versión B del algoritmo. Lleven los datos a formato
 largo y utilicen la escalera de potencias de Tukey para analizar las
-muestras obtenidas.</li>
-</ol>
+muestras obtenidas.</h2>
 <div id="hipótesis" class="section level3">
 <h3>Hipótesis:</h3>
 <div id="h0-los-tiempos-de-ejecución-entre-la-versión-a-y-b-del-algoritmo-cuando-estas-poseen-instancias-de-70-o-más-nodos-no-poseen-diferencias-significativas" class="section level5">
@@ -1710,8 +1706,8 @@ data &lt;- data.frame(
                     tiempos &lt;- tiempos
                     )</code></pre>
 </div>
-<div id="transformada-de-tukey" class="section level3">
-<h3>Transformada de tukey</h3>
+<div id="aplicación-de-la-escalera-de-potencias-de-tukey" class="section level3">
+<h3>Aplicación de la escalera de potencias de Tukey</h3>
 <pre class="r"><code>transformada &lt;- transformTukey(
                             data$tiempos,
                             start &lt;- -2,
@@ -1736,7 +1732,7 @@ independientes:</p>
 <ul>
 <li>Como las muestras obtenidas, tanto para el algoritmo A como para el
 algoritmo B, fueron escogidas aleatoriamente y son independientes entre
-si</li>
+sí.</li>
 <li>Según la transformada de Tukey aplicada se tiene que los nuevos
 datos siguen una distribución normal, esto debido a que la prueba de
 shapiro da un valor 0.1826 mayor al 0.05, que es nuestro valor de
@@ -1745,8 +1741,8 @@ alfa.</li>
 <p>Dado que se cumplen, se procede a aplicar la prueba ya
 mencionada:</p>
 </div>
-<div id="aplicación-de-t-test-dos-muestras-independientes" class="section level3">
-<h3>Aplicación de t test dos muestras independientes</h3>
+<div id="aplicación-de-t-test-para-dos-muestras-independientes" class="section level3">
+<h3>Aplicación de t test para dos muestras independientes</h3>
 <pre class="r"><code>data$tiempos &lt;- transformada
 alfa &lt;- 0.05
 muestraATransformada &lt;- (data %&gt;% filter(algoritmos....algoritmos == &quot;A&quot;))$tiempos
@@ -1759,11 +1755,10 @@ t.test(
         conf.level = 1 - alfa
         )$p.value</code></pre>
 <pre><code>## [1] 0.02178821</code></pre>
-<p>Dado que el valor p es menor a 0.025 (que es nuestro alfa/2 gracias a
-que es de dos colas) entonces se rechaza la hipótesis nula en favor de
-la hipótesis alternativa, por lo tanto, las sospechas de la memorista
-son ciertas, en otras palabras, las diferencias entre los algoritmos A y
-B para instancias de 70 o más nodos presentan diferencias
+<p>Dado que el valor p es menor a 0.05, se rechaza la hipótesis nula en
+favor de la hipótesis alternativa, por lo tanto, las sospechas de la
+memorista son ciertas, en otras palabras, las diferencias entre los
+algoritmos A y B para instancias de 70 o más nodos presentan diferencias
 significativas.</p>
 <ol start="2" style="list-style-type: decimal">
 <li>La memorista también sospecha que, al comparar las mismas
@@ -1777,23 +1772,24 @@ una prueba no paramétrica apropiada para analizar las muestras
 obtenidas.</li>
 </ol>
 </div>
-<div id="hipótesis-1" class="section level2">
-<h2>Hipótesis:</h2>
-<div id="h0-las-mejores-soluciones-encontradas-para-la-versión-b-y-c-del-algoritmo-cuando-estas-poseen-instancias-de-70-o-más-nodos-no-poseen-rendimientos-distintos" class="section level3">
-<h3><strong>H0 : Las mejores soluciones encontradas para la versión B y
+<div id="hipótesis-1" class="section level3">
+<h3>Hipótesis:</h3>
+<div id="h0-las-mejores-soluciones-encontradas-para-la-versión-b-y-c-del-algoritmo-cuando-estas-poseen-instancias-de-70-o-más-nodos-no-poseen-rendimientos-distintos" class="section level5">
+<h5><strong>H0 : Las mejores soluciones encontradas para la versión B y
 C del algoritmo cuando estas poseen instancias de 70 o más nodos, no
-poseen rendimientos distintos</strong></h3>
+poseen rendimientos distintos</strong></h5>
 <p><span class="math display">\[ \mu_B  = \mu_C \]</span></p>
 </div>
-<div id="ha-las-mejores-soluciones-encontradas-para-la-versión-b-y-c-del-algoritmo-cuando-estas-poseen-instancias-de-70-o-más-nodos-poseen-rendimientos-distintos" class="section level3">
-<h3><strong>Ha : Las mejores soluciones encontradas para la versión B y
+<div id="ha-las-mejores-soluciones-encontradas-para-la-versión-b-y-c-del-algoritmo-cuando-estas-poseen-instancias-de-70-o-más-nodos-poseen-rendimientos-distintos" class="section level5">
+<h5><strong>Ha : Las mejores soluciones encontradas para la versión B y
 C del algoritmo cuando estas poseen instancias de 70 o más nodos, poseen
-rendimientos distintos</strong></h3>
+rendimientos distintos</strong></h5>
 <p><span class="math display">\[ \mu_B \neq \mu_C \]</span></p>
 <p>Dado que se quiere determinar si para una misma instancia existen
 distintos rendimientos, se determina que se debe utilizar la prueba de
 rangos con signos de Wilcoxon. Sin embargo, primero se debe determinar
 si se cumplen las condiciones para poder aplicar dicha prueba.</p>
+</div>
 </div>
 <div id="prueba-de-rangos-con-signos-de-wilcoxon" class="section level3">
 <h3>Prueba de rangos con signos de Wilcoxon</h3>
