@@ -2,7 +2,9 @@
 title: "Ejercicio 7"
 author: "Alex Pacheco - Francisco Salfate - Xavier Munoz - Elena Guzman"
 date: '2022-10-04'
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -16,19 +18,14 @@ knitr::opts_chunk$set(echo = TRUE)
 setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
 ```
 
-1. Observando los datos, la memorista sospecha que hay diferencias significativas en el tiempo de ejecución entre las versiones A y B del
-algoritmo cuando las instancias tienen 70 o más nodos. ¿Los datos respaldan la intuición de la memorista? Para responder, filtren los 
-datos para tener las instancias con 70 o más nodos y seleccionen las columnas de los tiempos de ejecución de las versiones A y B en 
-formato ancho. Usando como semilla el valor 73, obtengan muestras aleatorias independientes de 24 tiempos registrados por la versión A
-y 20 tiempos registrados por la versión B del algoritmo. Lleven los datos a formato largo y utilicen la escalera de potencias de Tukey
-para analizar las muestras obtenidas.
+1. Observando los datos, la memorista sospecha que hay diferencias significativas en el tiempo de ejecución entre las versiones A y B del algoritmo cuando las instancias tienen 70 o más nodos. ¿Los datos respaldan la intuición de la memorista? Para responder, filtren los  datos para tener las instancias con 70 o más nodos y seleccionen las columnas de los tiempos de ejecución de las versiones A y B en  formato ancho. Usando como semilla el valor 73, obtengan muestras aleatorias independientes de 24 tiempos registrados por la versión A y 20 tiempos registrados por la versión B del algoritmo. Lleven los datos a formato largo y utilicen la escalera de potencias de Tukey para analizar las muestras obtenidas.
 
-## Hipótesis:
+### Hipótesis:
 
-### **H0 : Los tiempos de ejecución entre la versión A y B del algoritmo cuando estas poseen instancias de 70 o más nodos, no poseen diferencias significativas**
+##### **H0 : Los tiempos de ejecución entre la versión A y B del algoritmo cuando estas poseen instancias de 70 o más nodos, no poseen diferencias significativas**
 $$ \mu_{dif} = 0 $$
 
-### **Ha : Los tiempos de ejecución entre la versión A y B del algoritmo cuando estas poseen instancias de 70 o más nodos, poseen diferencias significativas.**
+##### **Ha : Los tiempos de ejecución entre la versión A y B del algoritmo cuando estas poseen instancias de 70 o más nodos, poseen diferencias significativas.**
 $$ \mu_{dif}  \neq 0 $$
 
 ```{r}
@@ -38,8 +35,7 @@ over70Nodos = datos %>% filter (n.nodos >= 70)
 ```
 
 ### Selección de muestras para el algoritmo A y B
-Primero, se seleccionan los datos que posean 70 nodos o más, los cuales están en formato ancho.
-Luego, se seleccionan de forma aleatoria 24 muestras para el tiempo del algoritmo A y 20 para el algoritmo B.
+Primero, se seleccionan los datos que posean 70 nodos o más, los cuales están en formato ancho. Luego, se seleccionan de forma aleatoria 24 muestras para el tiempo del algoritmo A y 20 para el algoritmo B.
 ```{r}
 # Data frame con n.nodos >= 70 
 muestra <- datos[sample(which(datos$n.nodos >= 70), 44), ]
@@ -53,11 +49,7 @@ shapiroMuestraA <- shapiro.test(muestra_t_A)
 shapiroMuestraB <- shapiro.test(muestra_t_B)
 c(shapiroMuestraA$p.value, shapiroMuestraB$p.value)
 ```
-Considerando un nivel de significancia de alpha = 0.05, al aplicar shapiro.test a las muestras del algoritmo A y del algoritmo B,
-se da cuenta que el valor p obtenido en ambas pruebas, es menor al alpha. En consecuencia, dichas muestras no siguen una distribución cercana a la normal
-y es necesario realizar una transformación de los datos para poder analizarlos. En este caso, se utilizará la escalera de potencias de Tukey.
-
-Sin embargo, los datos se deben llevar a formato largo para poder utilizar la escalera de potencias de Tukey para analizar las muestras obtenidas.
+Considerando un nivel de significancia de alpha = 0.05, al aplicar shapiro.test a las muestras del algoritmo A y del algoritmo B, se da cuenta que el valor p obtenido en ambas pruebas, es menor al alpha. En consecuencia, dichas muestras no siguen una distribución cercana a la normal y es necesario realizar una transformación de los datos para poder analizarlos. En este caso, se utilizará la escalera de potencias de Tukey. Sin embargo, los datos se deben llevar a formato largo para poder utilizar la escalera de potencias de Tukey para analizar las muestras obtenidas.  
 ```{r}
 id <- factor(1:44)
 algoritmos <- c(
@@ -83,14 +75,12 @@ transformada <- transformTukey(
                             )
 ```
 
-Al observar el gráfico Q-Q obtenido al aplicar la escalera de potencias de Tukey, se puede observar que los datos se ajustan a una distribución normal. En consecuencia 
-procede a aplicar una prueba t para dos muestras no independientes.
+Al observar el gráfico Q-Q obtenido al aplicar la escalera de potencias de Tukey, se puede observar que los datos se ajustan a una distribución normal. En consecuencia procede a aplicar una prueba t para dos muestras no independientes.
 
 Luego, se procede a verificar si se cumplen las condiciones necesarias para poder aplicar la prueba t para dos muestras no independientes:
 
 - Como las muestras obtenidas, tanto para el algoritmo A como para el algoritmo B, fueron escogidas aleatoriamente y son independientes entre si
-- Según la transformada de Tukey aplicada se tiene que los nuevos datos siguen una distribución normal,
-esto debido a que la prueba shapiro da un valor 0.1826 mayor al 0.05, que es nuestro valor de alfa.
+- Según la transformada de Tukey aplicada se tiene que los nuevos datos siguen una distribución normal, esto debido a que la prueba de shapiro da un valor 0.1826 mayor al 0.05, que es nuestro valor de alfa.
 
 Dado que se cumplen, se procede a aplicar la prueba ya mencionada:
 
@@ -123,12 +113,15 @@ $$ \mu_B \neq \mu_C $$
 
 
 Dado que se quiere determinar si para una misma instancia existen distintos rendimientos, se determina que se debe utilizar la
-prueba de rangos con signos de Wilcoxon.
+prueba de rangos con signos de Wilcoxon. Sin embargo, primero se debe determinar si se cumplen las condiciones para poder aplicar dicha prueba.
+
+
 
 ### Prueba de rangos con signos de Wilcoxon
+Primero se seleccionan 24 datos de forma aleatoria para luego aplicar la prueba de rangos con signos de Wilcoxon
 ```{r}
 set.seed(71)
-muestra <- datos[sample(which(datos$n.nodos >= 70), 48), ]
+muestra <- datos[sample(which(datos$n.nodos >= 70), 24), ]
 mejoresB <- muestra$mejor.B
 mejoresC <- muestra$mejor.C
 prueba <- wilcox.test(x = mejoresB,
