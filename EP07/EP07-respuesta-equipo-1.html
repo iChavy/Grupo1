@@ -1639,8 +1639,8 @@ pre code {
 </div>
 
 
-<div id="observando-los-datos-la-memorista-sospecha-que-hay-diferencias-significativas-en-el-tiempo-de-ejecución-entre-las-versiones-a-y-b-del-algoritmo-cuando-las-instancias-tienen-70-o-más-nodos.-los-datos-respaldan-la-intuición-de-la-memorista-para-responder-filtren-los-datos-para-tener-las-instancias-con-70-o-más-nodos-y-seleccionen-las-columnas-de-los-tiempos-de-ejecución-de-las-versiones-a-y-b-en-formato-ancho.-usando-como-semilla-el-valor-73-obtengan-muestras-aleatorias-independientes-de-24-tiempos-registrados-por-la-versión-a-y-20-tiempos-registrados-por-la-versión-b-del-algoritmo.-lleven-los-datos-a-formato-largo-y-utilicen-la-escalera-de-potencias-de-tukey-para-analizar-las-muestras-obtenidas." class="section level2">
-<h2>1. Observando los datos, la memorista sospecha que hay diferencias
+<div id="observando-los-datos-la-memorista-sospecha-que-hay-diferencias-significativas-en-el-tiempo-de-ejecución-entre-las-versiones-a-y-b-del-algoritmo-cuando-las-instancias-tienen-70-o-más-nodos.-los-datos-respaldan-la-intuición-de-la-memorista-para-responder-filtren-los-datos-para-tener-las-instancias-con-70-o-más-nodos-y-seleccionen-las-columnas-de-los-tiempos-de-ejecución-de-las-versiones-a-y-b-en-formato-ancho.-usando-como-semilla-el-valor-73-obtengan-muestras-aleatorias-independientes-de-24-tiempos-registrados-por-la-versión-a-y-20-tiempos-registrados-por-la-versión-b-del-algoritmo.-lleven-los-datos-a-formato-largo-y-utilicen-la-escalera-de-potencias-de-tukey-para-analizar-las-muestras-obtenidas." class="section level4">
+<h4>1. Observando los datos, la memorista sospecha que hay diferencias
 significativas en el tiempo de ejecución entre las versiones A y B del
 algoritmo cuando las instancias tienen 70 o más nodos. ¿Los datos
 respaldan la intuición de la memorista? Para responder, filtren los
@@ -1650,7 +1650,8 @@ ancho. Usando como semilla el valor 73, obtengan muestras aleatorias
 independientes de 24 tiempos registrados por la versión A y 20 tiempos
 registrados por la versión B del algoritmo. Lleven los datos a formato
 largo y utilicen la escalera de potencias de Tukey para analizar las
-muestras obtenidas.</h2>
+muestras obtenidas.</h4>
+</div>
 <div id="hipótesis" class="section level3">
 <h3>Hipótesis:</h3>
 <div id="h0-los-tiempos-de-ejecución-entre-la-versión-a-y-b-del-algoritmo-cuando-estas-poseen-instancias-de-70-o-más-nodos-no-poseen-diferencias-significativas" class="section level5">
@@ -1730,7 +1731,7 @@ dos muestras no independientes.</p>
 necesarias para poder aplicar la prueba t para dos muestras no
 independientes:</p>
 <ul>
-<li>Como las muestras obtenidas, tanto para el algoritmo A como para el
+<li>Las muestras obtenidas, tanto para el algoritmo A como para el
 algoritmo B, fueron escogidas aleatoriamente y son independientes entre
 sí.</li>
 <li>Según la transformada de Tukey aplicada se tiene que los nuevos
@@ -1760,17 +1761,17 @@ favor de la hipótesis alternativa, por lo tanto, las sospechas de la
 memorista son ciertas, en otras palabras, las diferencias entre los
 algoritmos A y B para instancias de 70 o más nodos presentan diferencias
 significativas.</p>
-<ol start="2" style="list-style-type: decimal">
-<li>La memorista también sospecha que, al comparar las mismas
+<div id="la-memorista-también-sospecha-que-al-comparar-las-mismas-instancias-las-mejores-soluciones-encontradas-por-las-versiones-b-y-c-tienen-rendimientos-distintos.-estará-en-lo-cierto" class="section level4">
+<h4>2. La memorista también sospecha que, al comparar las mismas
 instancias, las mejores soluciones encontradas por las versiones B y C
-tienen rendimientos distintos. ¿Estará en lo cierto? Para responder,
-filtren los datos para tener las instancias con 70 o más nodos y
-seleccionen las columnas con el mejor rendimiento de las versiones B y C
-en formato ancho. Usando como semilla el valor 71, obtengan una muestra
-aleatoria de 24 instancias. Lleven los datos a formato largo y utilicen
-una prueba no paramétrica apropiada para analizar las muestras
-obtenidas.</li>
-</ol>
+tienen rendimientos distintos. ¿Estará en lo cierto?</h4>
+<p>Para responder, filtren los datos para tener las instancias con 70 o
+más nodos y seleccionen las columnas con el mejor rendimiento de las
+versiones B y C en formato ancho. Usando como semilla el valor 71,
+obtengan una muestra aleatoria de 24 instancias. Lleven los datos a
+formato largo y utilicen una prueba no paramétrica apropiada para
+analizar las muestras obtenidas.</p>
+</div>
 </div>
 <div id="hipótesis-1" class="section level3">
 <h3>Hipótesis:</h3>
@@ -1785,21 +1786,33 @@ poseen rendimientos distintos</strong></h5>
 C del algoritmo cuando estas poseen instancias de 70 o más nodos, poseen
 rendimientos distintos</strong></h5>
 <p><span class="math display">\[ \mu_B \neq \mu_C \]</span></p>
-<p>Dado que se quiere determinar si para una misma instancia existen
-distintos rendimientos, se determina que se debe utilizar la prueba de
-rangos con signos de Wilcoxon. Sin embargo, primero se debe determinar
-si se cumplen las condiciones para poder aplicar dicha prueba.</p>
 </div>
 </div>
-<div id="prueba-de-rangos-con-signos-de-wilcoxon" class="section level3">
-<h3>Prueba de rangos con signos de Wilcoxon</h3>
-<p>Primero se seleccionan 24 datos de forma aleatoria para luego aplicar
-la prueba de rangos con signos de Wilcoxon</p>
+<div id="selección-de-datos" class="section level3">
+<h3>Selección de datos</h3>
+<p>Primero se seleccionan 24 datos de forma aleatoria.</p>
 <pre class="r"><code>set.seed(71)
 muestra &lt;- datos[sample(which(datos$n.nodos &gt;= 70), 24), ]
 mejoresB &lt;- muestra$mejor.B
-mejoresC &lt;- muestra$mejor.C
-prueba &lt;- wilcox.test(x = mejoresB,
+mejoresC &lt;- muestra$mejor.C</code></pre>
+<p>Dado que se quiere determinar si para una misma instancia existen
+distintos rendimientos, se determina que se debe utilizar la prueba de
+rangos con signos de Wilcoxon. Sin embargo, primero se debe determinar
+si se cumplen las condiciones para poder aplicar dicha prueba. Al
+analizar los datos, se pode observar que:</p>
+<ul>
+<li>Las muestras obtenidas para ambos algorítmos (B y C) son
+independientes entre si porque fueron escogidas de forma aleatoria.</li>
+<li>Se está trabajando con el rendimiento de dos algoritmos en
+tiempo,por lo tanto se utiliza una escala de medición continua.</li>
+<li>Dado que los datos se pueden ordenar jerárquicamente de acuerdo a
+algún criterio, la escala de medición también corresponde a una escala
+ordinal.</li>
+</ul>
+</div>
+<div id="aplicación-de-prueba-de-rangos-con-signos-de-wilcoxon" class="section level3">
+<h3>Aplicación de prueba de rangos con signos de Wilcoxon</h3>
+<pre class="r"><code>prueba &lt;- wilcox.test(x = mejoresB,
                     y = mejoresC,
                     paired = TRUE,
                     alternative = &quot;two.sided&quot;,
@@ -1816,7 +1829,6 @@ por ende, las sospechas de la memorista son ciertas, es decir, las
 mejores soluciones encontradas para la versión B y C del algoritmo
 cuando estas poseen instancias de 70 o más nodos, poseen rendimientos
 distintos.</p>
-</div>
 </div>
 
 

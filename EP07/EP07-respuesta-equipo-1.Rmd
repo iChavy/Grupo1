@@ -8,17 +8,17 @@ output:
 
 ```{r setup, include=FALSE}
 library ( knitr )
-#library ( tidyverse )
+library ( tidyverse )
 library ( RVAideMemoire )
 library ( rcompanion )
 library ( ez )
 knitr::opts_chunk$set(echo = TRUE)
 #setwd('C:\\Users\\Alex\\Desktop\\usach\\Semestre 6\\Estadística Inferencial\\Ejercicio 7')
-#setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
-setwd('C:/Users/ivani/Desktop/Grupo1')
+setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
+#setwd('C:/Users/ivani/Desktop/Grupo1')
 ```
 
-## 1. Observando los datos, la memorista sospecha que hay diferencias significativas en el tiempo de ejecución entre las versiones A y B del algoritmo cuando las instancias tienen 70 o más nodos. ¿Los datos respaldan la intuición de la memorista? Para responder, filtren los  datos para tener las instancias con 70 o más nodos y seleccionen las columnas de los tiempos de ejecución de las versiones A y B en  formato ancho. Usando como semilla el valor 73, obtengan muestras aleatorias independientes de 24 tiempos registrados por la versión A y 20 tiempos registrados por la versión B del algoritmo. Lleven los datos a formato largo y utilicen la escalera de potencias de Tukey para analizar las muestras obtenidas.
+#### 1. Observando los datos, la memorista sospecha que hay diferencias significativas en el tiempo de ejecución entre las versiones A y B del algoritmo cuando las instancias tienen 70 o más nodos. ¿Los datos respaldan la intuición de la memorista? Para responder, filtren los  datos para tener las instancias con 70 o más nodos y seleccionen las columnas de los tiempos de ejecución de las versiones A y B en  formato ancho. Usando como semilla el valor 73, obtengan muestras aleatorias independientes de 24 tiempos registrados por la versión A y 20 tiempos registrados por la versión B del algoritmo. Lleven los datos a formato largo y utilicen la escalera de potencias de Tukey para analizar las muestras obtenidas.
 
 ### Hipótesis:
 
@@ -100,7 +100,7 @@ t.test(
 ```
 Dado que el valor p es menor a 0.05, se rechaza la hipótesis nula en favor de la hipótesis alternativa, por lo tanto, las sospechas de la memorista son ciertas, en otras palabras, las diferencias entre los algoritmos A y B para instancias de 70 o más nodos presentan diferencias significativas.
 
-## 2. La memorista también sospecha que, al comparar las mismas instancias, las mejores soluciones encontradas por las versiones B y C tienen rendimientos distintos. ¿Estará en lo cierto?
+#### 2. La memorista también sospecha que, al comparar las mismas instancias, las mejores soluciones encontradas por las versiones B y C tienen rendimientos distintos. ¿Estará en lo cierto?
 Para responder, filtren los datos para tener las instancias con 70 o más nodos y seleccionen las columnas con el mejor rendimiento de las versiones B y C en formato ancho. Usando como semilla el valor 71, obtengan una muestra aleatoria de 24 instancias. Lleven los datos a formato largo y utilicen una prueba no paramétrica apropiada para analizar las muestras obtenidas.
 
 ### Hipótesis:
