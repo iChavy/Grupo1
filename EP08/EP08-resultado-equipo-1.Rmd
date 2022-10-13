@@ -1,0 +1,86 @@
+---
+title: "Ejercicio 8"
+date: '2022-10-13'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library ( knitr )
+library ( tidyverse )
+library ( RVAideMemoire )
+library ( rcompanion )
+library ( ez )
+knitr::opts_chunk$set(echo = TRUE)
+#setwd('C:\\Users\\Alex\\Desktop\\usach\\Semestre 6\\Estadística Inferencial\\Ejercicio 7')
+#setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
+#setwd('C:/Users/ivani/Desktop/Grupo1')
+```
+
+#### 1. La memorista sospecha que hay diferencias significativas en el tiempo de ejecución entre las versiones del algoritmo cuando las instancias de prueba tienen 80 o más nodos. ¿Los datos respaldan la intuición de la memorista?. Para responder, filtren los datos para tener las instancias con 80 o más nodos y seleccionen las columnas con los tiempos de ejecución registrados (en formato ancho). Usando como semilla el valor 37, obtengan muestras aleatorias independientes de 14, 12 y 13 tiempos registrados por las versiones A, B y C, respectivamente. Lleven los datos a formato largo y utilicen una prueba no paramétrica para analizar las muestras obtenidas.
+
+### Hipótesis:
+
+##### **H0 : Los tiempos de ejecución entre las versiones A, B y C del algoritmo cuando estas poseen instancias de 80 o más nodos, no poseen diferencias significativas**
+$$ \mu_{dif} = 0 $$
+
+##### **Ha : Los tiempos de ejecución entre las versiones A, B y C del algoritmo cuando estas poseen instancias de 80 o más nodos, poseen diferencias significativas.**
+$$ \mu_{dif}  \neq 0 $$
+
+
+```{r}
+set.seed(37)
+datos <-read.csv(file="EP07 Datos.csv")
+over70Nodos = datos %>% filter (n.nodos >= 80)
+```
+
+### Selección de muestras para el algoritmo A, B y C
+Primero, se seleccionan los datos que posean 80 nodos o más, los cuales están en formato ancho. Luego, se seleccionan de forma aleatoria 14 muestras para el tiempo del algoritmo A, 12 para el algoritmo B y 13 para el algoritmo C.
+```{r}
+# Data frame con n.nodos >= 70 
+muestra <- datos[sample(which(datos$n.nodos >= 80), 39), ]
+muestra_t_A <- muestra[, 4][1:14]
+muestra_t_B <- muestra[, 5][15:26]
+muestra_t_C <- muestra[, 6][27:39]
+```
+
+Dado que ...... se debe aplicar Kruskall-.....
+
+
+### Condiciones
+
+
+### Datos en formato largo
+```{r}
+id <- factor(1:39)
+algoritmos <- c(
+                replicate(14, "A"),
+                replicate(12, "B"),
+                replicate(13, "C")
+                )
+tiempos <- c(muestra_t_A, muestra_t_B, muestra_t_C)
+data <- data.frame(
+                    id <- id,
+                    algoritmos <- algoritmos,
+                    tiempos <- tiempos
+                    )
+```
+
+### Aplicación de Kruskal-Wallis
+
+```{r}
+alfa <- 0.05
+
+test_Kruskal <- kruskal.test(tiempos ~ algoritmos, data = data)
+print(test_Kruskal)
+```
+
+Dado que el valor de p es menor al nivel de significancia indicado, se debe aplicar una prueba post-hoc, en este caso se opta por usar Holm.
+
+```{r}
+post_hoc <- pairwise.wilcox.test(data$tiempos,
+                                 data$algoritmos,
+                                 p.adjust.method = "holm",
+                                 paired = FALSE)
+print(post_hoc)
+```
+
