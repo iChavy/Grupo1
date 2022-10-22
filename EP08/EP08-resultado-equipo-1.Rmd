@@ -6,14 +6,15 @@ output: html_document
 
 ```{r setup, include=FALSE}
 library ( knitr )
-#library ( tidyverse )
+library ( tidyverse )
 library ( RVAideMemoire )
 library ( rcompanion )
 library ( ez )
+library(WRS2)
 knitr::opts_chunk$set(echo = TRUE)
-#setwd('C:\\Users\\Alex\\Desktop\\usach\\Semestre 6\\Estadística Inferencial\\Ejercicio 7')
+setwd('C:\\Users\\Alex\\Desktop\\usach\\Semestre 6\\Estadística Inferencial\\Ejercicio 8')
 #setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
-setwd('C:/Users/ivani/Desktop/Grupo1')
+#setwd('C:/Users/ivani/Desktop/Grupo1')
 ```
 
 #### 1. La memorista sospecha que hay diferencias significativas en el tiempo de ejecución entre las versiones del algoritmo cuando las instancias de prueba tienen 80 o más nodos. ¿Los datos respaldan la intuición de la memorista?. Para responder, filtren los datos para tener las instancias con 80 o más nodos y seleccionen las columnas con los tiempos de ejecución registrados (en formato ancho). Usando como semilla el valor 37, obtengan muestras aleatorias independientes de 14, 12 y 13 tiempos registrados por las versiones A, B y C, respectivamente. Lleven los datos a formato largo y utilicen una prueba no paramétrica para analizar las muestras obtenidas.
@@ -23,14 +24,13 @@ setwd('C:/Users/ivani/Desktop/Grupo1')
 ##### **H0 : Los tiempos de ejecución entre las versiones A, B y C del algoritmo cuando estas poseen instancias de 80 o más nodos, no poseen diferencias significativas**
 $$ \mu_{dif} = 0 $$
 
-##### **Ha : Los tiempos de ejecución entre las versiones A, B y C del algoritmo cuando estas poseen instancias de 80 o más nodos, poseen diferencias significativas.**
+##### **Ha : Los tiempos de ejecución entre las versiones A, B y C del algoritmo cuando estas poseen instancias de 80 o más nodos, presentan diferencias en a lo menos un par.**
 $$ \mu_{dif}  \neq 0 $$
 
 
 ```{r}
 set.seed(37)
 datos <-read.csv(file="EP07 Datos.csv")
-over70Nodos = datos %>% filter (n.nodos >= 80)
 ```
 
 ### Selección de muestras para el algoritmo A, B y C
@@ -43,11 +43,17 @@ muestra_t_B <- muestra[, 5][15:26]
 muestra_t_C <- muestra[, 6][27:39]
 ```
 
-Dado que ...... se debe aplicar Kruskall-.....
-
+Dado que las distintas muestra no mantienen una misma cantidad de elementos se está obligado a ocupar una alternativa no paramétrica a la prueba ANOVA para muestras independientes.
 
 ### Condiciones
+#### Variable independiente tiene a lo menos 2 niveles
+Dado que se está empleando tres muestras distintas, esto implica que se hace uso de 3 niveles.
 
+#### Variable dependiente debe ser a lo menos ordinal
+Se están empleando variables cuantitativas de escalas iguales.
+
+#### Muestras independientes entre sí
+Se está forzando a elegir muestras independientes entre sí.
 
 ### Datos en formato largo
 ```{r}
@@ -73,8 +79,7 @@ alfa <- 0.05
 test_Kruskal <- kruskal.test(tiempos ~ algoritmos, data = data)
 print(test_Kruskal)
 ```
-
-Dado que el valor de p es menor al nivel de significancia indicado, se debe aplicar una prueba post-hoc, en este caso se opta por usar Holm.
+El valor conseguido es menor al alfa establecido (0.05), en consecuencia, se rechaza la hipótesis nula en favor de la alternativa, es decir, existe a lo menos un par de algoritmos que presentan diferencias significativas. Por consiguiente, se debe aplicar una prueba post-hoc para determinar qué par es el que se diferencia. Se opta por usar Holm.
 
 ```{r}
 post_hoc <- pairwise.wilcox.test(data$tiempos,
@@ -83,11 +88,10 @@ post_hoc <- pairwise.wilcox.test(data$tiempos,
                                  paired = FALSE)
 print(post_hoc)
 ```
-
+De la tabla anterior se puede observar que existen dos pares de algoritmos que presentan diferencias significativas C-A y C-B.
 
 ## Pregunta 2
-#### La memorista también sospecha que, al comparar las mismas instancias de prueba con 70 o más nodos, las mejores soluciones encontradas por las diferentes versiones del algoritmo tienen rendimientos distintos. ¿Estará en lo cierto?
-Para responder, filtren los datos para tener las instancias con 70 o más nodos y seleccionen las columnas con los mejores rendimientos registrados. Usando como semilla el valor 13, obtengan una muestra aleatoria de 22 instancias. Lleven los datos a formato largo y utilicen una prueba no paramétrica apropiada para analizar los datos obtenidos.
+#### La memorista también sospecha que, al comparar las mismas instancias de prueba con 70 o más nodos, las mejores soluciones encontradas por las diferentes versiones del algoritmo tienen rendimientos distintos. ¿Estará en lo cierto? Para responder, filtren los datos para tener las instancias con 70 o más nodos y seleccionen las columnas con los mejores rendimientos registrados. Usando como semilla el valor 13, obtengan una muestra aleatoria de 22 instancias. Lleven los datos a formato largo y utilicen una prueba no paramétrica apropiada para analizar los datos obtenidos.
 
 ### Para esto tenemos los siguiente supuestos:
 $$ H_0: \text{Las mejores soluciones encontradas por las versiones A, B y C del algoritmo tienen rendimientos iguales}$$
@@ -102,17 +106,17 @@ mejoresB <- muestra$mejor.B
 mejoresC <- muestra$mejor.C
 ```
 
-## Dado que las
----- condiciones ---
-Supuesto de normalidad
-```{r}
-shapiroMejoresA <- shapiro.test(mejoresA)
-shapiroMejoresB <- shapiro.test(mejoresB)
-shapiroMejoresC <- shapiro.test(mejoresC)
-c(shapiroMejoresA$p.value, shapiroMejoresB$p.value, shapiroMejoresC$p.value)
-```
-
 Si bien podemos notar que los algorítmos A y B no cumplen con el supuesto de normalidad, al aplicar la prueba de friedman internamente se realizarán las transformaciones correspondientes.
+
+### Condiciones
+#### Variable independiente tiene a lo menos 2 niveles
+Dado que se está empleando tres muestras distintas, esto implica que se hace uso de 3 niveles.
+
+#### Variable dependiente debe ser a lo menos ordinal
+Se están empleando variables cuantitativas de escalas iguales.
+
+#### Muestras independientes entre sí
+Según contexto los datos son independientes y aleatorios.
 
 ## Aplicación de prueba de Friedman
 ```{r}
@@ -127,13 +131,42 @@ pruebaFriedman <- friedman.test(tiempo ~ algoritmo | observacion, data = datafra
 print(pruebaFriedman)
 ```
 
-El p-value encontrado es menor a 0.05, rechazamos la hipótesis nula, sin embargo, debemos realizar un procedimiento post-hoc.
+El p-value encontrado es menor a 0.05, se rechaza la hipótesis nula en favor de la hipótesis alternativa, sin embargo, debemos realizar un procedimiento post-hoc.
 
 ## Procedimiento post-hoc
 ```{r}
-post_hoc <- pairwise.wilcox.test(datos$tiempo,
-                                 datos$algoritmo,
+post_hoc <- pairwise.wilcox.test(dataframe$tiempo,
+                                 dataframe$algoritmo,
                                  p.adjust.method = "holm",
                                  paired = TRUE)
 print(post_hoc)
 ```
+De lo expuesto se puede observar que se presentan dos pares de algoritmos que muestran diferencias significativas B-A y C-A.
+
+## Pregunta 3
+### Reanalice los datos obtenidos en la pregunta 1, esta vez usando un método basado en la estadística robusta.
+
+```{r}
+t1way(tiempo ~ algoritmo, data, 0.2, 0.05)
+```
+Se puede ver que al usar un porcentaje de truncación de 20% se consigue un valor p menor al alfa establecido, en consecuencia, se rechaza la hipótesis nula en favor de la alternativa y se debe hacer uso de un procediemiento post-hoc.
+
+```{r}
+lincon(tiempo ~ algoritmo, data, 0.2, 0.05)
+```
+Se puede observar que los pares que presentan diferencias significativas son A-B y A-C.
+
+## Pregunta 4
+### Repita el proceso con los datos conseguidos en la pregunta 2.
+
+```{r}
+rmanova(y = dataframe$tiempo, groups= dataframe$algoritmo, blocks = dataframe$observacion, tr = 0.1)
+```
+Se puede observar que al usar un valor de truncación del 10% se obtiene un valor p inferior a alfa (0.05), en consecuencia, se rechaza la hipótesis nula en favor de la alternativa y se debe hacer uso de un procedimiento post-hoc.
+
+```{r}
+rmmcp(y = dataframe$tiempo, groups= dataframe$algoritmo, blocks = dataframe$observacion, tr = 0.1)
+```
+De lo anterior, se puede concluir que existen dos pares los cuales presentan diferencias significativas A-B y A-C.
+
+
