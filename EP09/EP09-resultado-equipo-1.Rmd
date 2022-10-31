@@ -1,0 +1,25 @@
+---
+title: "EP09"
+output: html_document
+date: "2022-10-26"
+---
+
+```{r setup, include=FALSE}
+library ( knitr )
+library ( tidyverse )
+library ( RVAideMemoire )
+#library ( rcompanion )
+library ( ez )
+library(WRS2)
+knitr::opts_chunk$set(echo = TRUE)
+#setwd('C:\\Users\\Alex\\Desktop\\usach\\Semestre 6\\Estadística Inferencial\\Ejercicio 8')
+#setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
+#setwd('C:/Users/ivani/Desktop/Grupo1')
+```
+
+
+
+```{r}
+set.seed(37)
+datos <-read.csv(file="EP09 Datos.csv", sep =";", header = TRUE, check.names = FALSE)
+```
