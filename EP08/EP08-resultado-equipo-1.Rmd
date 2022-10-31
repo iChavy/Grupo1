@@ -12,7 +12,7 @@ library ( rcompanion )
 library ( ez )
 library(WRS2)
 knitr::opts_chunk$set(echo = TRUE)
-setwd('C:\\Users\\Alex\\Desktop\\usach\\Semestre 6\\Estadística Inferencial\\Ejercicio 8')
+#setwd('C:\\Users\\Alex\\Desktop\\usach\\Semestre 6\\Estadística Inferencial\\Ejercicio 8')
 #setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
 #setwd('C:/Users/ivani/Desktop/Grupo1')
 ```
@@ -43,17 +43,17 @@ muestra_t_B <- muestra[, 5][15:26]
 muestra_t_C <- muestra[, 6][27:39]
 ```
 
-Dado que las distintas muestra no mantienen una misma cantidad de elementos se está obligado a ocupar una alternativa no paramétrica a la prueba ANOVA para muestras independientes.
+Dado que las distintas muestra no mantienen una misma cantidad de elementos se está obligado a ocupar una alternativa no paramétrica a la prueba ANOVA para muestras independientes, por lo que se piensa utilizar la prueba de Kruskal-Wallis y se procede a verificar si se cumplen las condiciones para aplicar dicho test.
 
 ### Condiciones
 #### Variable independiente tiene a lo menos 2 niveles
-Dado que se está empleando tres muestras distintas, esto implica que se hace uso de 3 niveles.
+La variable independiente son los algoritmos y esta posee 3 niveles, el algoritmo A, B y C.
 
 #### Variable dependiente debe ser a lo menos ordinal
 Se están empleando variables cuantitativas de escalas iguales.
 
 #### Muestras independientes entre sí
-Se está forzando a elegir muestras independientes entre sí.
+Al seleccionar los datos, se asegura que estos sean independientes entre sí.
 
 ### Datos en formato largo
 ```{r}
@@ -106,17 +106,17 @@ mejoresB <- muestra$mejor.B
 mejoresC <- muestra$mejor.C
 ```
 
-Si bien podemos notar que los algorítmos A y B no cumplen con el supuesto de normalidad, al aplicar la prueba de friedman internamente se realizarán las transformaciones correspondientes.
+Si bien podemos notar que los algorítmos A y B no cumplen con el supuesto de normalidad, al aplicar la prueba de Friedman internamente se realizará las transformaciones correspondientes.
 
 ### Condiciones
 #### Variable independiente tiene a lo menos 2 niveles
-Dado que se está empleando tres muestras distintas, esto implica que se hace uso de 3 niveles.
+La variable independiente son los algoritmos y esta posee 3 niveles, el algoritmo A, B y C.
 
 #### Variable dependiente debe ser a lo menos ordinal
 Se están empleando variables cuantitativas de escalas iguales.
 
 #### Muestras independientes entre sí
-Según contexto los datos son independientes y aleatorios.
+Según el contexto los datos seleccionados son independientes y aleatorios entre sí.
 
 ## Aplicación de prueba de Friedman
 ```{r}
@@ -131,7 +131,7 @@ pruebaFriedman <- friedman.test(tiempo ~ algoritmo | observacion, data = datafra
 print(pruebaFriedman)
 ```
 
-El p-value encontrado es menor a 0.05, se rechaza la hipótesis nula en favor de la hipótesis alternativa, sin embargo, debemos realizar un procedimiento post-hoc.
+El p-value encontrado es menor a 0.05,en conseuciencia, se rechaza la hipótesis nula en favor de la hipótesis alternativa, sin embargo, debemos realizar un procedimiento post-hoc.
 
 ## Procedimiento post-hoc
 ```{r}
@@ -141,7 +141,7 @@ post_hoc <- pairwise.wilcox.test(dataframe$tiempo,
                                  paired = TRUE)
 print(post_hoc)
 ```
-De lo expuesto se puede observar que se presentan dos pares de algoritmos que muestran diferencias significativas B-A y C-A.
+De lo expuesto, se puede observar que se presentan dos pares de algoritmos que muestran diferencias significativas B-A y C-A.
 
 ## Pregunta 3
 ### Reanalice los datos obtenidos en la pregunta 1, esta vez usando un método basado en la estadística robusta.
