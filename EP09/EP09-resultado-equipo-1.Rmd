@@ -23,3 +23,38 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(37)
 datos <-read.csv(file="EP09 Datos.csv", sep =";", header = TRUE, check.names = FALSE)
 ```
+
+### 1. La diferencia de sueldos entre técnicos profesionales y profesionales universitarios, dependiendo del tipo de carrera y región (ya que juega un papel importante en cuanto a oferta laboral), puede ser similar o poseer una diferencia significativa, además, se cree que las personas solteras poseen mayor poder adquisitivo ya que no tienen un número importante de gastos si estos no poseen familia, por lo que se desea conocer si las personas solteras con hogar propio pagado (v9) en la región de Valparaíso ¿es similar entre profesional completo y técnico nivel superior completo (e6a)?
+
+```{r}
+set.seed(90)
+#filtrar primero los datos por region de valpo y solteros y con casa propia
+%>% filter(region = "Región de Valparaíso" & "Soltero(a)" & v9 = "Propio pagado"))
+
+# filtrar por solteros y tecnicos con casa propia
+soltero_tecnico = datos[]
+%>% filter(e6a = "Técnico Nivel Superior Completo (Carreras 1 a 3 años)")
+
+# filtrar por soltero y universitario con casa propia
+soltero_profesional = datos[]
+%>% filter(e6a = "Profesional Completo (Carreras 4 o más años)")
+
+
+
+```
+
+
+### 2. Chile posee distintos tipos de climas a lo largo de su territorio, por lo que se desea determinar si este repercute en la cantidad de horas trabajadas, por lo que se selecciona el número de horas promedio trabajadas al día mensualmente (y2_hrs / y2_dias) en distintas regiones del país. ¿La cantidad de horas promedio trabajadas en las regiones de Los Lagos, Metropolitana, Magallanes, Atacama y Tarapacá es similar?
+
+#### Selección de datos
+```{r}
+set.seed(90)
+#Para cada region filtrar las horas y dias y calcular el promedio
+y2_hrs = datos[38]
+y2_diaz = datos[37]
+%>% filter(region = "Región de Los Lagos")
+%>% filter(region = "Región Metropolitana de Santiago")
+%>% filter(region = "Región de Magallanes y de la Antártica Chilena")
+%>% filter(region = "Región de Atacama")
+%>% filter(region = "Región de Tarapacá")
+```
