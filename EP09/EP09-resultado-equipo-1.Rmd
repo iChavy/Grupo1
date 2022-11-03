@@ -1,7 +1,9 @@
 ---
 title: "EP09"
-output: html_document
-date: "2022-10-26"
+output:
+  pdf_document: default
+  html_document: default
+date: '2022-10-26'
 ---
 
 ```{r setup, include=FALSE}
@@ -12,49 +14,162 @@ library ( RVAideMemoire )
 library ( ez )
 library(WRS2)
 knitr::opts_chunk$set(echo = TRUE)
-#setwd('C:\\Users\\Alex\\Desktop\\usach\\Semestre 6\\Estadística Inferencial\\Ejercicio 8')
+setwd('C:\\Users\\Alex\\Desktop\\usach\\Semestre 6\\Estadística Inferencial\\Grupo1\\EP09')
 #setwd('A:\\biblio\\Desktop\\ESTACA DIF\\TE2\\EP07')
 #setwd('C:/Users/ivani/Desktop/Grupo1')
 ```
 
+```{r, echo = FALSE}
+obtiene_pemutacion <- function(i, muestra_1, muestra_2){
+  n_1 <- length(muestra_1)
+  combinada <- c(muestra_1, muestra_2)
+  n <- length(combinada)
+  permutacion <- sample(combinada, n , replace =FALSE)
+  nueva_1 <- permutacion[1:n_1]
+  nueva_2 <- permutacion[(n_1+1):n]
+  return(list(nueva_1,nueva_2))
+}
+calcular_diferencia <- function(muestras, FUN){
+  muestra_1 <- muestras[[1]]
+  muestra_2 <- muestras[[2]]
+  diferencia <- FUN(muestra_1) - FUN(muestra_2)
+  return(diferencia)
+}
 
+calcular_valor_p <- function(distribucion, valor_observado, repeticiones, alternative){
+  if(alternative == "two.sided"){
+    numerador <- sum(abs(distribucion) > abs(valor_observado)) + 1
+    denominador <- repeticiones + 1
+    valor_p <- numerador /denominador
+  }
+}
 
-```{r}
-set.seed(37)
-datos <-read.csv(file="EP09 Datos.csv", sep =";", header = TRUE, check.names = FALSE)
+contrastar_hipotesis_permutaciones <- function(muestra_1, muestra_2, repeticiones, FUN, alternative){
+  observado <- calcular_diferencia(list(muestra_1,muestra_2), FUN)
+  
+  n_1 <- length(muestra_1)
+  
+  permutaciones <- lapply(1:repeticiones, obtiene_pemutacion, muestra_1, muestra_2)
+  
+  distribucion <- sapply(permutaciones, calcular_diferencia, FUN)
+  
+  valor_p <- calcular_valor_p(distribucion, observado, repeticiones, alternative)
+  return(valor_p)
+}
+
 ```
 
-### 1. La diferencia de sueldos entre técnicos profesionales y profesionales universitarios, dependiendo del tipo de carrera y región (ya que juega un papel importante en cuanto a oferta laboral), puede ser similar o poseer una diferencia significativa, además, se cree que las personas solteras poseen mayor poder adquisitivo ya que no tienen un número importante de gastos si estos no poseen familia, por lo que se desea conocer si las personas solteras con hogar propio pagado (v9) en la región de Valparaíso ¿es similar entre profesional completo y técnico nivel superior completo (e6a)?
+
 
 ```{r}
+datos = read.csv(file="EP09 Datos.csv", sep =";", header = TRUE)
+```
+
+### 1. La diferencia de sueldos entre técnicos profesionales y profesionales universitarios, dependiendo del tipo de carrera y región (ya que juega un papel importante en cuanto a oferta laboral), puede ser similar o poseer una diferencia significativa, además, se cree que las personas solteras poseen mayor poder adquisitivo ya que no tienen un número importante de gastos si estos no poseen familia, por lo que se desea conocer si la cantidad de personas solteras con hogar propio pagado (v9) en la región de Valparaíso ¿es similar entre profesional completo y técnico nivel superior completo (e6a)?
+
+### Hipótesis:
+
+##### **H0 : No existe diferencia entre las cantidad de personas que poseen hogar propio entre Técnicos de nivel completo y Profesionales de nivel completo, esto para personas pertenecientes la Región de Valaparaíso y a su vez solteras.**
+
+##### **H0 : Existe diferencia entre las cantidad de personas que poseen hogar propio entre Técnicos de nivel completo y Profesionales de nivel completo, esto para personas pertenecientes la Región de Valaparaíso y a su vez solteras.**
+
+```{r}
+# Establecimiento de muestras
 set.seed(90)
 #filtrar primero los datos por region de valpo y solteros y con casa propia
-%>% filter(region = "Región de Valparaíso" & "Soltero(a)" & v9 = "Propio pagado"))
+soltero_valpa = datos %>% filter(region == "Región de Valparaíso" & ecivil== "Soltero(a)" & (e6a == "Técnico Nivel Superior Completo (Carreras 1 a 3 años)" | e6a == "Profesional Completo (Carreras 4 o más años)"))
 
 # filtrar por solteros y tecnicos con casa propia
-soltero_tecnico = datos[]
-%>% filter(e6a = "Técnico Nivel Superior Completo (Carreras 1 a 3 años)")
+soltero_valpa_tecnico = soltero_valpa %>% filter(e6a == "Técnico Nivel Superior Completo (Carreras 1 a 3 años)")
+tecnico_con_hogar_propio = length((soltero_valpa_tecnico %>% filter(v9 == "Propio pagado"))$region)
+tecnico_sin_hogar_propio = length(soltero_valpa_tecnico$region) - tecnico_con_hogar_propio
 
 # filtrar por soltero y universitario con casa propia
-soltero_profesional = datos[]
-%>% filter(e6a = "Profesional Completo (Carreras 4 o más años)")
-
-
-
+soltero_valpa_profesional = soltero_valpa %>% filter(e6a == "Profesional Completo (Carreras 4 o más años)")
+profesional_con_hogar_propio = length((soltero_valpa_profesional %>% filter(v9 == "Propio pagado"))$region)
+profesional_sin_hogar_propio = length(soltero_valpa_profesional$region) - profesional_con_hogar_propio
 ```
 
+```{r}
+# Funcion a emplear
+# Dada una muestra con valores que representan la posesión de casa, donde 0 representa no tener casa propia y 1 sí, se cuenta la cantidad de hogares tienen casa propia
+contarConHogar <- function(muestra){
+  sum(muestra == 1)
+}
+```
+
+```{r}
+prof = c(rep(1,profesional_con_hogar_propio),rep(0,profesional_sin_hogar_propio))
+tecn = c(rep(1,tecnico_con_hogar_propio),rep(0,profesional_sin_hogar_propio))
+
+contrastar_hipotesis_permutaciones(prof,tecn, 5999, contarConHogar, alternative = "two.sided")
+```
+Dado que el valor p es inferior a 1-alfa (donde alfa es de 0.05) se puede decir que se falla en rechazar la hipótesis nula, en consecuencia, no existe una diferencia entre la cantidad de personas que posean casa propia entre individuos con carreara Profesional y Técnicos, tal que pertenezcan a la Región de Valparaíso y sean solteras.
 
 ### 2. Chile posee distintos tipos de climas a lo largo de su territorio, por lo que se desea determinar si este repercute en la cantidad de horas trabajadas, por lo que se selecciona el número de horas promedio trabajadas al día mensualmente (y2_hrs / y2_dias) en distintas regiones del país. ¿La cantidad de horas promedio trabajadas en las regiones de Los Lagos, Metropolitana, Magallanes, Atacama y Tarapacá es similar?
+
+### Hipótesis:
+
+##### **H0 : No existe diferencia entre la cantidad de horas promedio trabajadas en las regiones de Los Lagos, Metropolitana y de Atacama**
+$$ \mu{lagos} = \mu{metropolitana} = \mu{atacama} $$
+
+##### **Ha : Existe diferencia entre la cantidad de horas promedio trabajadas en las regiones de Los Lagos, Metropolitana y de Atacama**
+$$ \mu{dif}  \neq 0 $$
 
 #### Selección de datos
 ```{r}
 set.seed(90)
 #Para cada region filtrar las horas y dias y calcular el promedio
-y2_hrs = datos[38]
-y2_diaz = datos[37]
-%>% filter(region = "Región de Los Lagos")
-%>% filter(region = "Región Metropolitana de Santiago")
-%>% filter(region = "Región de Magallanes y de la Antártica Chilena")
-%>% filter(region = "Región de Atacama")
-%>% filter(region = "Región de Tarapacá")
+lagos = datos %>% filter(region == "Región de Los Lagos" & (!is.na(y2.hrs)) & (!is.na(y2.dias)))
+muestra_lagos = lagos[sample(nrow(lagos),150),]
+
+
+metropolitana = datos %>% filter(region == "Región Metropolitana de Santiago" & (!is.na(y2.hrs)) & (!is.na(y2.dias)))
+muestra_metropolitana = metropolitana[sample(nrow(metropolitana),150),]
+
+
+atacama = datos %>% filter(region == "Región de Atacama" & (!is.na(y2.hrs)) & (!is.na(y2.dias)))
+muestra_atacama = atacama[sample(nrow(atacama),150),]
+
+
+horas_lagos = muestra_lagos[38]$y2.hrs/muestra_lagos[37]$y2.dias
+horas_metropolitana = muestra_metropolitana[38]$y2.hrs/muestra_metropolitana[37]$y2.dias
+horas_atacama = muestra_atacama[38]$y2.hrs/muestra_atacama[37]$y2.dias
+```
+
+```{r}
+# Entonces se construye el dataframe
+horas_promedio = c(horas_lagos, horas_metropolitana, horas_atacama)
+regiones = c("Los lagos", "Metropolitana", "Atacama")
+data = data.frame(horas_promedio, regiones)
+```
+
+
+Se comprueba la normalidad de los datos
+```{r}
+test1 <- shapiro.test(data$horas_promedio)
+print(test1)
+```
+Los datos no siguen una distribución normal, por lo tanto se requiere de un procedimiento que aplique un remuestreo (Bootstrap), en este caso se hará uso de la función t1waybt() para llevar a cabo un análisis para todas las regiones.
+
+```{r}
+
+alfa <- 0.05
+muestras <- 999
+
+# Se hace elección de este gamma ya que se desea llevar a cabo un procedimiento post-hoc
+# (Esto debido a que la función mcppb20 no acepta valores de trimming menores a 0.2)
+gamma <- 0.2
+
+test2 <- t1waybt(horas_promedio ~ regiones, data = data, tr = gamma, alpha = alfa)
+
+print(test2)
+```
+El resultado del test sugiere con un p-value de 0.22204, que sugiere que no hay una diferencia significativa entre las medias de las tres regiones.
+
+De igual manera se realiza un procedimiento post-hoc para observar las comparaciones entre estas regiones.
+```{r}
+post_hoc <- mcppb20(horas_promedio ~ regiones, data = data, tr = gamma, nboot = muestras)
+
+print(post_hoc)
 ```
